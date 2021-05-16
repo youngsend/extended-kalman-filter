@@ -4,7 +4,7 @@
 #include "Eigen/Dense"
 
 class MeasurementPackage {
- public:
+public:
   enum SensorType{
     LASER,
     RADAR

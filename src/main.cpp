@@ -2,7 +2,7 @@
 #include <uWS/uWS.h>
 #include <iostream>
 #include "json.hpp"
-#include "FusionEKF.h"
+#include "kalman_filter.h"
 #include "tools.h"
 
 using Eigen::MatrixXd;
@@ -33,7 +33,7 @@ int main() {
   uWS::Hub h;
 
   // Create a Kalman Filter instance
-  FusionEKF fusionEKF;
+  KalmanFilter fusionEKF;
 
   // used to compute the RMSE later
   Tools tools;
@@ -113,25 +113,14 @@ int main() {
           // Push the current estimated x,y positon from the Kalman filter's 
           //   state vector
 
-          VectorXd estimate(4);
-
-          double p_x = fusionEKF.ekf_.x_(0);
-          double p_y = fusionEKF.ekf_.x_(1);
-          double v1  = fusionEKF.ekf_.x_(2);
-          double v2 = fusionEKF.ekf_.x_(3);
-
-          estimate(0) = p_x;
-          estimate(1) = p_y;
-          estimate(2) = v1;
-          estimate(3) = v2;
-        
+          VectorXd estimate = fusionEKF.GetStateVector();
           estimations.push_back(estimate);
 
           VectorXd RMSE = tools.CalculateRMSE(estimations, ground_truth);
 
           json msgJson;
-          msgJson["estimate_x"] = p_x;
-          msgJson["estimate_y"] = p_y;
+          msgJson["estimate_x"] = estimate(0);
+          msgJson["estimate_y"] = estimate(1);
           msgJson["rmse_x"] =  RMSE(0);
           msgJson["rmse_y"] =  RMSE(1);
           msgJson["rmse_vx"] = RMSE(2);

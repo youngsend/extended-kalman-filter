@@ -3,22 +3,39 @@
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
-using std::vector;
 
-Tools::Tools() {}
+/**
+ * calculate root mean squared error between kalman filter estimations and ground truth, to evaluate kf performance.
+ * @param estimations
+ * @param ground_truth
+ * @return
+ */
+VectorXd Tools::CalculateRMSE(const std::vector<VectorXd> &estimations,
+                              const std::vector<VectorXd> &ground_truth) {
+  VectorXd rmse(4);
+  rmse << 0,0,0,0;
 
-Tools::~Tools() {}
+  // check the validity of the following inputs:
+  //  * the estimation vector size should not be zero
+  //  * the estimation vector size should equal ground truth vector size
+  if (estimations.empty() || estimations.size() != ground_truth.size()) {
+    std::cout << "Invalid data\n";
+    return rmse;
+  }
 
-VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
-                              const vector<VectorXd> &ground_truth) {
-  /**
-   * TODO: Calculate the RMSE here.
-   */
-}
+  // accumulate squared residuals
+  for (size_t i=0; i < estimations.size(); i++) {
+    // ... your code here
+    VectorXd diff = estimations[i] - ground_truth[i];
+    rmse = rmse + diff.cwiseProduct(diff);
+  }
 
-MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
-  /**
-   * TODO:
-   * Calculate a Jacobian here.
-   */
+  // calculate the mean
+  rmse /= estimations.size();
+
+  // calculate the squared root
+  rmse = rmse.cwiseSqrt();
+
+  // return the result
+  return rmse;
 }
