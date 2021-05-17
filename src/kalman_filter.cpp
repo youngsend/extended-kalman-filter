@@ -10,32 +10,32 @@ KalmanFilter::KalmanFilter() {
   // state covariance matrix P
   P_ = MatrixXd(4, 4);
   P_ << 1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1000, 0,
-          0, 0, 0, 1000;
+        0, 1, 0, 0,
+        0, 0, 1000, 0,
+        0, 0, 0, 1000;
 
   //measurement covariance matrix - laser
   R_laser_ = MatrixXd(2, 2);
   R_laser_ << 0.0225, 0,
-          0, 0.0225;
+              0, 0.0225;
 
   //measurement covariance matrix - radar
   R_radar_ = MatrixXd(3, 3);
   R_radar_ << 0.09, 0, 0,
-          0, 0.0009, 0,
-          0, 0, 0.09;
+              0, 0.0009, 0,
+              0, 0, 0.09;
 
   // measurement matrix - laser
   H_laser_ = MatrixXd(2, 4);
   H_laser_ << 1, 0, 0, 0,
-          0, 1, 0, 0;
+              0, 1, 0, 0;
 
   // the initial transition matrix. because elapsed_time is in transition matrix, it will change.
   F_ = MatrixXd(4, 4);
   F_ << 1, 0, 1, 0,
-          0, 1, 0, 1,
-          0, 0, 1, 0,
-          0, 0, 0, 1;
+        0, 1, 0, 1,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
 
   // process covariance matrix. Q_ will be recalculated in Predict function, because of delta_t.
   Q_ = MatrixXd(4, 4);
@@ -109,9 +109,9 @@ void KalmanFilter::Predict(float dt) {
  * @param z
  */
 void KalmanFilter::Update(const VectorXd &z) {
-  VectorXd z_pred = H_ * x_;
+  VectorXd z_pred = H_laser_ * x_;
   VectorXd y = z - z_pred;
-  UpdateWithYHR(y, H_, R_laser_);
+  UpdateWithYHR(y, H_laser_, R_laser_);
 }
 
 /**
@@ -128,6 +128,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   UpdateWithYHR(y, Hj, R_radar_);
 }
 
+/**
+ * split the common part of kf and ekf update into a seperate function.
+ * @param y difference between z (sensor measurement) and z_pred (calculated with measurement model)
+ * @param H measurement matrix, fixed in kf, changes in ekf.
+ * @param R measurement covariance, different because of different sensor type.
+ */
 void KalmanFilter::UpdateWithYHR(const Eigen::VectorXd &y,
                                  const Eigen::MatrixXd &H,
                                  const Eigen::MatrixXd &R) {

@@ -69,9 +69,6 @@ private:
   Eigen::MatrixXd Q_;
   float noise_ax_{5}, noise_ay_{5};
 
-  // measurement matrix
-  Eigen::MatrixXd H_;
-
   // laser measurement covariance matrix
   Eigen::MatrixXd R_laser_;
   // radar measurement covariance matrix
