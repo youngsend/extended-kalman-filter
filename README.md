@@ -46,7 +46,8 @@ In this project you will utilize a kalman filter to estimate the state of a movi
 
 ### files and implementation
 
-All kalman filter functions are implemented in `kalman_filter.h` and `kalman_filter.cpp`.
+- All kalman filter functions are implemented in `kalman_filter.h` and `kalman_filter.cpp`.
+- The kalman filter and extended kalman filter formulas used in this course can be found [here](https://github.com/youngsend/LearningSelfDrivingCars/blob/master/Self-Driving-Cars_Udacity/Computer-Vision-Deep-Learning-and-Sensor-Fusion/l24-extended-kalman-filters.md).
 
 #### 1. initialization using first measurement from lidar or radar
 
